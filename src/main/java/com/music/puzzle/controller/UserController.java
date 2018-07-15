@@ -73,4 +73,9 @@ public class UserController {
         return jwt;
     }
 
+    @RequestMapping(path = "check")
+    public ResponseEntity<String> healthCheck() {
+        return new ResponseEntity<>("Server running", HttpStatus.OK);
+    }
+
 }

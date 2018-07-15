@@ -9,8 +9,8 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
-//@ImportResource("classpath:security.xml")
-//@EnableWebSecurity()
+@ImportResource("classpath:security.xml")
+@EnableWebSecurity()
 public class PuzzleApplication {
 
 	public static void main(String[] args) {
