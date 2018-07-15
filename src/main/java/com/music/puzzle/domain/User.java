@@ -49,9 +49,6 @@ public class User {
     @NonNull
     private transient String confirmPassword;
 
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;

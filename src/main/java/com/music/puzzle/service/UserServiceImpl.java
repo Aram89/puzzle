@@ -27,7 +27,6 @@ public class UserServiceImpl implements  UserService{
     public void create(User user) throws AppException {
         checkEmail(user.getEmail());
         checkUserName(user.getUserName());
-        checkPassword(user.getPassword(), user.getConfirmPassword());
         userRepo.save(user);
     }
 
