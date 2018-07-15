@@ -33,14 +33,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(path = "/user/signup", method = RequestMethod.POST)
+    @RequestMapping(path = "/signup", method = RequestMethod.POST)
     public ResponseEntity<String> signUp(@RequestBody @NonNull User user) throws AppException, UnsupportedEncodingException {
         userService.create(user);
         String jwt = generateJwt(user.getUserName());
         return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/user/signin", method = RequestMethod.POST)
+    @RequestMapping(path = "/signin", method = RequestMethod.POST)
     public ResponseEntity<String> signIn(@RequestBody @NonNull User user) throws AppException, UnsupportedEncodingException {
         userService.login(user);
         String jwt = generateJwt(user.getUserName());
