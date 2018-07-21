@@ -7,11 +7,20 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import static com.music.puzzle.authorization.SecurityConstants.HEADER_STRING;
+import static com.music.puzzle.authorization.SecurityConstants.SECRET;
+import static com.music.puzzle.authorization.SecurityConstants.TOKEN_PREFIX;
 
 
 /**
@@ -22,68 +31,43 @@ import java.io.IOException;
  * 
  * @author Aram Kirakosyan.
  */
-public class AuthorizationFilter implements Filter {
-
-   	/**
-	 * JWT secret key, value injected from auth0.properties file.
-	 */
-    @Value("${auth0.clientSecret}")
-    private String secret;
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
+public class AuthorizationFilter extends BasicAuthenticationFilter {
+    public AuthorizationFilter(AuthenticationManager authManager) {
+        super(authManager);
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        // Cast to HttpServletRequest.
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+    protected void doFilterInternal(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    FilterChain chain) throws IOException, ServletException {
+        String header = req.getHeader(HEADER_STRING);
 
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+            chain.doFilter(req, res);
+            return;
+        }
 
-        // Get jwt token from authorization header.
-        String token = httpServletRequest.getHeader("Authorization");
-        // Get username form header.
-        String userNameFromRequest = httpServletRequest.getHeader("User");
+        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
 
-//        if (token == null || userNameFromRequest == null) {
-//            // No jwt token, send error response to client.
-//            generateAndSendErrorResponse((HttpServletResponse) response, "headers are missing");
-//            return;
-//        }
-//        Jws<Claims> claims = Jwts.parser()
-//                    .setSigningKey(secret.getBytes("UTF-8"))
-//                    .parseClaimsJws(token);
-//        String userName = (String) claims.getBody().get("userName");
-//        if(!userNameFromRequest.equals(userName)) {
-//            generateAndSendErrorResponse(httpServletResponse, "Jwt is not valid");
-//        }
-        // TODO check also expiration time.
-        // JWT validation passed, continue filter.
-        filterChain.doFilter(request, response);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        chain.doFilter(req, res);
     }
 
-    @Override
-    public void destroy() {
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+        String token = request.getHeader(HEADER_STRING);
+        if (token != null) {
+            // parse the token.
+            String user = Jwts.parser()
+                    .setSigningKey(SECRET.getBytes())
+                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+                    .getBody()
+                    .getSubject();
 
-    }
-
-    private void generateAndSendErrorResponse (HttpServletResponse httpServletResponse, String message) throws IOException {
-        ErrorCode errorCodes = new ErrorCode(message);
-        // jwt is not valid, send error response to client.
-        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        httpServletResponse.setContentType("application/json");
-        httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.getWriter().write(convertObjectToJson(errorCodes));
-        httpServletResponse.flushBuffer();
-    }
-
-    private String convertObjectToJson(Object object) throws JsonProcessingException {
-        if (object == null) {
+            if (user != null) {
+                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+            }
             return null;
         }
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(object);
+        return null;
     }
 }

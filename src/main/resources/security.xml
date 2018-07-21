@@ -1,46 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<beans xmlns="http://www.springframework.org/schema/beans"-->
+       <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"-->
 
-       xmlns:secutiy="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans.xsd
+       <!--xmlns:secutiy="http://www.springframework.org/schema/security"-->
+       <!--xsi:schemaLocation="http://www.springframework.org/schema/beans-->
+                           <!--http://www.springframework.org/schema/beans/spring-beans.xsd-->
 
-     http://www.springframework.org/schema/security
-    http://www.springframework.org/schema/security/spring-security.xsd">
+     <!--http://www.springframework.org/schema/security-->
+    <!--http://www.springframework.org/schema/security/spring-security.xsd">-->
 
-    <!--Activate @PreFilter, @PreAuthorize, @PostFilter, @PostAuthorize annotations-->
-    <secutiy:global-method-security pre-post-annotations="enabled"/>
+    <!--&lt;!&ndash;Activate @PreFilter, @PreAuthorize, @PostFilter, @PostAuthorize annotations&ndash;&gt;-->
+    <!--<secutiy:global-method-security pre-post-annotations="enabled"/>-->
 
-    <!--Define filter chain applied to all requests (session creation is stateless-->
-    <secutiy:http create-session="stateless" pattern="/user/*" entry-point-ref="auth0AuthenticationEntryPoint">
-        <secutiy:csrf disabled="true"/>
-        <secutiy:custom-filter before="FIRST" ref="authorizationFilter"/>
-    </secutiy:http>
+    <!--&lt;!&ndash;Define filter chain applied to all requests (session creation is stateless&ndash;&gt;-->
+    <!--<secutiy:http create-session="stateless" pattern="/user/*" entry-point-ref="auth0AuthenticationEntryPoint">-->
+        <!--<secutiy:csrf disabled="true"/>-->
+        <!--<secutiy:custom-filter before="FIRST" ref="authorizationFilter"/>-->
+    <!--</secutiy:http>-->
 
-    <!--Auth0 authentication manager-->
-    <secutiy:authentication-manager alias="authenticationManager">
-        <secutiy:authentication-provider ref="auth0AuthenticationProvider">
-        </secutiy:authentication-provider>
-    </secutiy:authentication-manager>
+    <!--&lt;!&ndash;Auth0 authentication manager&ndash;&gt;-->
+    <!--<secutiy:authentication-manager alias="authenticationManager">-->
+        <!--<secutiy:authentication-provider ref="auth0AuthenticationProvider">-->
+        <!--</secutiy:authentication-provider>-->
+    <!--</secutiy:authentication-manager>-->
 
-    <!--Auth0 authentication provider-->
-    <bean id="auth0AuthenticationProvider" class="com.auth0.spring.security.api.Auth0AuthenticationProvider">
-        <property name="clientSecret" value="${auth0.clientSecret}"></property>
-        <property name="clientId" value="${auth0.clientId}"></property>
-        <property name="securedRoute" value="${auth0.securedRoute}"></property>
-    </bean>
+    <!--&lt;!&ndash;Auth0 authentication provider&ndash;&gt;-->
+    <!--<bean id="auth0AuthenticationProvider" class="com.auth0.spring.security.api.Auth0AuthenticationProvider">-->
+        <!--<property name="clientSecret" value="${auth0.clientSecret}"></property>-->
+        <!--<property name="clientId" value="${auth0.clientId}"></property>-->
+        <!--<property name="securedRoute" value="${auth0.securedRoute}"></property>-->
+    <!--</bean>-->
 
-    <!--Authorization filter-->
-    <bean id="authorizationFilter" class="com.music.puzzle.authorization.AuthorizationFilter"/>
+    <!--&lt;!&ndash;Authorization filter&ndash;&gt;-->
+    <!--<bean id="authorizationFilter" class="com.music.puzzle.authorization.AuthorizationFilter"/>-->
 
-    <!--Auth0 authentication entry point-->
-    <bean id="auth0AuthenticationEntryPoint"
-          class="com.auth0.spring.security.api.Auth0AuthenticationEntryPoint"/>
+    <!--&lt;!&ndash;Auth0 authentication entry point&ndash;&gt;-->
+    <!--<bean id="auth0AuthenticationEntryPoint"-->
+          <!--class="com.auth0.spring.security.api.Auth0AuthenticationEntryPoint"/>-->
 
-    <bean id="springSecurityFilterChain"
-          class="org.springframework.security.web.FilterChainProxy">
-        <!-- properties -->
-    </bean>
+    <!--<bean id="springSecurityFilterChain"-->
+          <!--class="org.springframework.security.web.FilterChainProxy">-->
+        <!--&lt;!&ndash; properties &ndash;&gt;-->
+    <!--</bean>-->
 
-</beans>
+<!--</beans>-->
