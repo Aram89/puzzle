@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
+
+import static com.music.puzzle.authorization.SecurityConstants.EXPIRATION_TIME;
+import static com.music.puzzle.authorization.SecurityConstants.SECRET;
 
 @Controller
 public class UserController {
@@ -36,8 +40,8 @@ public class UserController {
     @RequestMapping(path = "user/sign-up", method = RequestMethod.POST)
     public ResponseEntity<String> signUp(@RequestBody @NonNull User user) throws AppException, UnsupportedEncodingException {
         userService.create(user);
-        //String jwt = generateJwt(user.getUserName());
-        return new ResponseEntity<>( HttpStatus.OK);
+        String jwt = generateJwt(user.getUserName());
+        return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
     @RequestMapping(path = "user/sign-in", method = RequestMethod.POST)
@@ -62,16 +66,12 @@ public class UserController {
 
 
     private String generateJwt(String userName) throws UnsupportedEncodingException {
-        String jwt = Jwts.builder()
+        String token = Jwts.builder()
                 .setSubject(userName)
-                .setPayload(userName)
-                .claim("userName", userName)
-                .signWith(
-                        SignatureAlgorithm.HS256,
-                        secret.getBytes("UTF-8")
-                )
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
                 .compact();
-        return jwt;
+        return token;
     }
 
     @RequestMapping(path = "/check")

@@ -23,7 +23,6 @@ import java.util.Date;
 
 import static com.music.puzzle.authorization.SecurityConstants.EXPIRATION_TIME;
 import static com.music.puzzle.authorization.SecurityConstants.HEADER_STRING;
-import static com.music.puzzle.authorization.SecurityConstants.TOKEN_PREFIX;
 import static com.music.puzzle.authorization.SecurityConstants.SECRET;
 
 
@@ -64,7 +63,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
                 .compact();
-        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+        res.addHeader(HEADER_STRING, token);
     }
 }
 

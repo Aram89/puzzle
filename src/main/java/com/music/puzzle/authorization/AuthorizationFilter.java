@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import static com.music.puzzle.authorization.SecurityConstants.HEADER_STRING;
 import static com.music.puzzle.authorization.SecurityConstants.SECRET;
-import static com.music.puzzle.authorization.SecurityConstants.TOKEN_PREFIX;
+
 
 
 /**
@@ -42,7 +42,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
                                     FilterChain chain) throws IOException, ServletException {
         String header = req.getHeader(HEADER_STRING);
 
-        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+        if (header == null) {
             chain.doFilter(req, res);
             return;
         }
@@ -59,7 +59,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             // parse the token.
             String user = Jwts.parser()
                     .setSigningKey(SECRET.getBytes())
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+                    .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
 
