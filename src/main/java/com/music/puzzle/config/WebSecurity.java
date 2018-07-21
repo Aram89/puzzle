@@ -3,6 +3,7 @@ package com.music.puzzle.config;
 import com.music.puzzle.authorization.AuthenticationFilter;
 import com.music.puzzle.authorization.AuthorizationFilter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -17,6 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static com.music.puzzle.authorization.SecurityConstants.SIGN_UP_URL;
 
+@Configuration
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userDetailsService;
