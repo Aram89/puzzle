@@ -14,5 +14,6 @@ public interface UserService {
     void addProfileInfo(User user) throws AppException;
     void sendCode(String email) throws AppException;
     void verifyCode(String email, String code) throws AppException;
+    void changePassword(String userName, String password) throws AppException;
 
 }

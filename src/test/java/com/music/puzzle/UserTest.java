@@ -22,7 +22,6 @@ public class UserTest extends BaseTest {
         user.setEmail("test-user@gmail111.com");
         user.setUserName("test-u1ser");
         user.setPassword("pass");
-        user.setConfirmPassword("pass");
         String jsonContent = convertObjectToJsonString(user);
         mockMvc.perform(post("/user/signup")
                 .content(jsonContent)

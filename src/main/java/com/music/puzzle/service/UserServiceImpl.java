@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.List;
 import java.util.Random;
 
@@ -85,7 +86,7 @@ public class UserServiceImpl implements  UserService{
         if(userList.isEmpty()) {
             throw new AppException("Email does not exist");
         }
-        String code = "55555";
+        String code = "1111";
         mailService.sendEmail(email, "forgot password", "Your code is " + code);
         // update code in DB
         User user = userList.get(0);
@@ -102,6 +103,17 @@ public class UserServiceImpl implements  UserService{
         if (!code.equals(user.get(0).getRecoveryCode())) {
             throw new AppException("Code is not correct");
         }
+    }
+
+    @Override
+    public void changePassword(String userName, String password) throws AppException {
+        List<User> users = userRepo.findByUserName(userName);
+        if(users.isEmpty()) {
+            throw new AppException("user does not exist");
+        }
+        User user = users.get(0);
+        user.setPassword(password);
+        userRepo.save(user);
     }
 
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -22,6 +23,7 @@ import static com.music.puzzle.authorization.SecurityConstants.EXPIRATION_TIME;
 import static com.music.puzzle.authorization.SecurityConstants.SECRET;
 
 @Controller
+@RequestMapping("/user")
 public class UserController {
 
     /**
@@ -37,37 +39,50 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(path = "user/sign-up", method = RequestMethod.POST)
+    @RequestMapping(path = "/sign-up", method = RequestMethod.POST)
     public ResponseEntity<String> signUp(@RequestBody @NonNull User user) throws AppException, UnsupportedEncodingException {
         userService.create(user);
         String jwt = generateJwt(user.getUserName());
         return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
-    @RequestMapping(path = "user/sign-in", method = RequestMethod.POST)
+    @RequestMapping(path = "/sign-in", method = RequestMethod.POST)
     public ResponseEntity<String> signIn(@RequestBody @NonNull User user) throws AppException, UnsupportedEncodingException {
         userService.login(user);
         String jwt = generateJwt(user.getUserName());
         return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/user/forgot-password", method = RequestMethod.POST)
-    public ResponseEntity<String> forgotPassword(@RequestBody @NonNull User user) throws AppException, UnsupportedEncodingException {
-        userService.login(user);
-        String jwt = generateJwt(user.getUserName());
+    @RequestMapping(path = "/forgot-password", method = RequestMethod.GET)
+    public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) throws AppException, UnsupportedEncodingException {
+        userService.sendCode(email);
+        String jwt = generateJwt(email);
         return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/test", method = RequestMethod.GET)
-    public ResponseEntity<String> test() throws AppException, UnsupportedEncodingException {
-        userService.sendCode("aramkirakosyan89@gmail.com");
+    @RequestMapping(path = "/verify-code", method = RequestMethod.GET)
+    public ResponseEntity<String> verifyCode(@RequestParam("email") String email, @RequestParam("code") String code) throws AppException, UnsupportedEncodingException {
+        userService.verifyCode(email, code);
+        String jwt = generateJwt(email);
+        return new ResponseEntity<>(jwt, HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/change-password", method = RequestMethod.POST)
+    public ResponseEntity<String> changePassword(@RequestBody @NonNull User user) throws AppException, UnsupportedEncodingException {
+        userService.changePassword(user.getUserName(), user.getPassword());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/add-profile-info", method = RequestMethod.POST)
+    public ResponseEntity<String> addProfileData(@RequestBody @NonNull User user) throws AppException, UnsupportedEncodingException {
+        userService.addProfileInfo(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
-    private String generateJwt(String userName) throws UnsupportedEncodingException {
+    private String generateJwt(String email) throws UnsupportedEncodingException {
         String token = Jwts.builder()
-                .setSubject(userName)
+                .setSubject(email)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
                 .compact();

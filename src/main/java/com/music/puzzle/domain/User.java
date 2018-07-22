@@ -39,20 +39,22 @@ public class User {
 
     private String recoveryCode;
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    private String location;
+
     public String getRecoveryCode() {
         return recoveryCode;
     }
 
     public void setRecoveryCode(String recoveryCode) {
         this.recoveryCode = recoveryCode;
-    }
-
-    @NonNull
-    private transient String confirmPassword;
-
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
     }
 
     public long getId() {

@@ -21,16 +21,6 @@ import java.util.ArrayList;
 import static com.music.puzzle.authorization.SecurityConstants.HEADER_STRING;
 import static com.music.puzzle.authorization.SecurityConstants.SECRET;
 
-
-
-/**
- * Filter for checking and verifying jwt for protected paths.
- * JWT is set in Authorization header, if jwt is valid chain will e continued.
- * If jwt is not present or is not valid, error response will be send to client,
- * with 401 (UNAUTHORIZED) status. 
- * 
- * @author Aram Kirakosyan.
- */
 public class AuthorizationFilter extends BasicAuthenticationFilter {
     public AuthorizationFilter(AuthenticationManager authManager) {
         super(authManager);
@@ -49,25 +39,51 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
         UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
 
+        if (authentication == null) {
+            generateAndSendErrorResponse((HttpServletResponse) res, "Token is not valid");
+        }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
-        if (token != null) {
-            // parse the token.
-            String user = Jwts.parser()
-                    .setSigningKey(SECRET.getBytes())
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+        try {
+            if (token != null) {
+                // parse the token.
+                String user = Jwts.parser()
+                        .setSigningKey(SECRET.getBytes())
+                        .parseClaimsJws(token)
+                        .getBody()
+                        .getSubject();
 
-            if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                if (user != null) {
+                    return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                }
+                return null;
             }
+        } catch (Exception e) {
             return null;
         }
         return null;
+    }
+
+    private void generateAndSendErrorResponse (HttpServletResponse httpServletResponse, String message) throws IOException {
+        ErrorCode errorCodes = new ErrorCode(message);
+        // jwt is not valid, send error response to client.
+        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        httpServletResponse.setContentType("application/json");
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.getWriter().write(convertObjectToJson(errorCodes));
+        httpServletResponse.flushBuffer();
+    }
+
+    private String convertObjectToJson(Object object) throws JsonProcessingException {
+        if (object == null) {
+            return null;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(object);
     }
 }
