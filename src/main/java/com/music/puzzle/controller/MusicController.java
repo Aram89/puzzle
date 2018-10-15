@@ -26,10 +26,5 @@ public class MusicController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/save")
-    public ResponseEntity<String> healthCheck() {
-        musicService.save();
-        return new ResponseEntity<>("Saved", HttpStatus.OK);
-    }
 
 }
