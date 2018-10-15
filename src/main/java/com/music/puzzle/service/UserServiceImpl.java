@@ -81,6 +81,15 @@ public class UserServiceImpl implements  UserService{
     }
 
     @Override
+    public User getProfileInfo(String userName) throws AppException {
+        List<User> users = userRepo.findByUserName(userName);
+        if(users.isEmpty()) {
+            throw new AppException("user does not exist");
+        }
+        return users.get(0);
+    }
+
+    @Override
     public void sendCode(String email) throws AppException {
         List<User> userList = userRepo.findByEmail(email);
         if(userList.isEmpty()) {
@@ -115,5 +124,7 @@ public class UserServiceImpl implements  UserService{
         user.setPassword(password);
         userRepo.save(user);
     }
+
+
 
 }

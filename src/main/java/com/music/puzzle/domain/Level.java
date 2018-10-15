@@ -6,4 +6,6 @@ public enum Level {
     ENTRY,
     BASIC,
     MASTER;
+
+
 }

@@ -7,9 +7,7 @@ import static org.junit.Assert.assertEquals;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-/**
- * Created by Aram on 7/12/18.
- */
+
 public class AuthorizationTest extends BaseTest {
 
     String VALID_JWT = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0LXVzZXIifQ.RoH6NSkVJxlKqjRVqj3TsEW3OfyfSgQ3lL9PlCspHwQ";

@@ -11,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -22,7 +19,7 @@ import java.util.Date;
 import static com.music.puzzle.authorization.SecurityConstants.EXPIRATION_TIME;
 import static com.music.puzzle.authorization.SecurityConstants.SECRET;
 
-@Controller
+@RestController
 @RequestMapping("/user")
 public class UserController {
 
@@ -79,19 +76,18 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(path = "/get-profile-info", method = RequestMethod.GET)
+    public ResponseEntity<User> getProfileData(@RequestParam @NonNull String userName) throws AppException, UnsupportedEncodingException {
+        User user = userService.getProfileInfo(userName);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 
     private String generateJwt(String email) throws UnsupportedEncodingException {
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(email)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
                 .compact();
-        return token;
-    }
-
-    @RequestMapping(path = "/check")
-    public ResponseEntity<String> healthCheck() {
-        return new ResponseEntity<>("Server running", HttpStatus.OK);
     }
 
 }

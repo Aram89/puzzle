@@ -12,6 +12,7 @@ public interface UserService {
     void checkUserName(String userName) throws AppException;
     void checkPassword(String password, String confirmPassword) throws AppException;
     void addProfileInfo(User user) throws AppException;
+    User getProfileInfo(String userName) throws AppException;
     void sendCode(String email) throws AppException;
     void verifyCode(String email, String code) throws AppException;
     void changePassword(String userName, String password) throws AppException;
