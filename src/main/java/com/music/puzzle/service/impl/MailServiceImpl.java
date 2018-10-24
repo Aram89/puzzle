@@ -1,5 +1,6 @@
-package com.music.puzzle.service;
+package com.music.puzzle.service.impl;
 
+import com.music.puzzle.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

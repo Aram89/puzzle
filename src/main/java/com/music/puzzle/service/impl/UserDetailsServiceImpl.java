@@ -1,4 +1,4 @@
-package com.music.puzzle.service;
+package com.music.puzzle.service.impl;
 
 import com.music.puzzle.repository.UserRepo;
 import org.springframework.security.core.userdetails.User;

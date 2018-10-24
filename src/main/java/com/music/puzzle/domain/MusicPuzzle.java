@@ -15,13 +15,23 @@ public class MusicPuzzle {
     private List<MusicPiece> pieces;
 
     @Column
-    private String level;
+    private Level level;
 
     @Column
     private String name;
 
     @Column
     private String path;
+
+    private Genre genre;
+
+    public Genre getGenre() {
+        return genre;
+    }
+
+    public void setGenre(Genre genre) {
+        this.genre = genre;
+    }
 
     public long getMusicId() {
         return musicId;
@@ -39,11 +49,11 @@ public class MusicPuzzle {
         this.pieces = pieces;
     }
 
-    public String getLevel() {
+    public Level getLevel() {
         return level;
     }
 
-    public void setLevel(String level) {
+    public void setLevel(Level level) {
         this.level = level;
     }
 
@@ -62,4 +72,5 @@ public class MusicPuzzle {
     public void setPath(String path) {
         this.path = path;
     }
+
 }

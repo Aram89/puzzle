@@ -51,4 +51,27 @@ public class MusicPiece {
     public void setPath(String path) {
         this.path = path;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MusicPiece piece = (MusicPiece) o;
+
+        if (id != piece.id) return false;
+        if (position != piece.position) return false;
+        if (musicPuzzle != null ? !musicPuzzle.equals(piece.musicPuzzle) : piece.musicPuzzle != null) return false;
+        return path != null ? path.equals(piece.path) : piece.path == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (musicPuzzle != null ? musicPuzzle.hashCode() : 0);
+        result = 31 * result + position;
+        result = 31 * result + (path != null ? path.hashCode() : 0);
+        return result;
+    }
 }

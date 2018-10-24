@@ -3,10 +3,7 @@ package com.music.puzzle.domain;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
-
-import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -27,7 +24,16 @@ public class User {
     @Column
     private String phone;
     @Column
-    private int point;
+    private int score;
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     @Column(unique = true)
     @NonNull
     private String email;
@@ -49,6 +55,7 @@ public class User {
 
     private String location;
 
+    @Transient
     public String getRecoveryCode() {
         return recoveryCode;
     }
@@ -97,14 +104,6 @@ public class User {
         this.phone = phone;
     }
 
-    public int getPoint() {
-        return point;
-    }
-
-    public void setPoint(int point) {
-        this.point = point;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -136,4 +135,6 @@ public class User {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
+
 }
