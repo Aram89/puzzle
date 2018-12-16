@@ -11,11 +11,11 @@ public class MusicPuzzle {
     @GeneratedValue
     private long musicId;
 
-    @OneToMany(mappedBy = "musicPuzzle", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "musicPuzzle", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<MusicPiece> pieces;
 
     @Column
-    private Level level;
+    private Integer level;
 
     @Column
     private String name;
@@ -23,6 +23,7 @@ public class MusicPuzzle {
     @Column
     private String path;
 
+    @Column
     private Genre genre;
 
     public Genre getGenre() {
@@ -49,11 +50,11 @@ public class MusicPuzzle {
         this.pieces = pieces;
     }
 
-    public Level getLevel() {
+    public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(Level level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 

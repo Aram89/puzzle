@@ -1,5 +1,6 @@
 package com.music.puzzle.authorization;
 
+import com.music.puzzle.util.JwtHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -43,7 +44,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            creds.getUserName(),
+                            creds.getEmail(),
                             creds.getPassword(),
                             new ArrayList<>())
             );
@@ -58,11 +59,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
 
-        String token = Jwts.builder()
-                .setSubject(((User) auth.getPrincipal()).getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
-                .compact();
+        String token = JwtHelper.generate( ((User) auth.getPrincipal()).getUsername());
         res.addHeader(HEADER_STRING, token);
     }
 }

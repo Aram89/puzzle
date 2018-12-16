@@ -3,7 +3,8 @@ package com.music.puzzle.domain;
 
 public enum Genre {
 
-    ROCK,
-    JAZZ,
-    CLASSIC;
+    Rock,
+    Jazz,
+    Classic,
+    Pop;
 }

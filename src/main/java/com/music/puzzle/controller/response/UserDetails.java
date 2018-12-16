@@ -1,19 +1,18 @@
 package com.music.puzzle.controller.response;
 
-public class UserInfo {
-
-    private String email;
+/**
+ * Created by Aram on 11/11/18.
+ */
+public class UserDetails {
     private String userName;
     private String location;
     private int score;
-    private int level;
+    private int position;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public UserDetails(String userName, String location, int score) {
+        this.userName = userName;
+        this.location = location;
+        this.score = score;
     }
 
     public String getUserName() {
@@ -40,11 +39,12 @@ public class UserInfo {
         this.score = score;
     }
 
-    public int getLevel() {
-        return level;
+
+    public int getPosition() {
+        return position;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

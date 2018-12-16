@@ -1,4 +1,4 @@
-package com.music.puzzle.service.impl;
+package com.music.puzzle.service;
 
 import com.music.puzzle.repository.UserRepo;
 import org.springframework.security.core.userdetails.User;
@@ -18,11 +18,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        com.music.puzzle.domain.User applicationUser = applicationUserRepository.findByUserName(username).get(0);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        com.music.puzzle.domain.User applicationUser = applicationUserRepository.findByEmail(email).get(0);
         if (applicationUser == null) {
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException(email);
         }
-        return new User(applicationUser.getUserName(), applicationUser.getPassword(), emptyList());
+        return new User(applicationUser.getEmail(), applicationUser.getPassword(), emptyList());
     }
 }

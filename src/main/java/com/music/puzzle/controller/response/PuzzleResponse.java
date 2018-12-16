@@ -7,9 +7,19 @@ public class PuzzleResponse {
 
     private List<PieceResponse> pieceList;
     private String name;
+    private long musicId;
 
-    public PuzzleResponse(String name) {
+    public PuzzleResponse(String name, long musicId) {
         this.name = name;
+        this.musicId = musicId;
+    }
+
+    public long getMusicId() {
+        return musicId;
+    }
+
+    public void setMusicId(long musicId) {
+        this.musicId = musicId;
     }
 
     public List<PieceResponse> getPieceList() {

@@ -30,16 +30,11 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .antMatchers(HttpMethod.POST, "/user/sign-in").permitAll()
-
                 .antMatchers(HttpMethod.GET, "/health").permitAll()
                 .antMatchers(HttpMethod.GET, "/user/forgot-password").permitAll()
-                .antMatchers(HttpMethod.GET, "/music/puzzle").permitAll()
-                .antMatchers(HttpMethod.GET, "/music/save").permitAll()
-                .antMatchers("/**").permitAll()
 
-                .antMatchers(
-                        "/v2/api-docs", "/swagger-resources/**",
-                        "/configuration/**", "/swagger-ui.html", "/webjars/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/music/guest/puzzle").permitAll()
+                .antMatchers(HttpMethod.GET, "/music/save").permitAll()
 
                 .anyRequest().authenticated()
                 .and()

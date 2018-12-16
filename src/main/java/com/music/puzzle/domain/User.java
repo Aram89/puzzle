@@ -15,7 +15,7 @@ public class User {
     @Column
     private String name;
     @Column
-    private String surName;
+    private String surname;
     @Column(unique = true)
     @NonNull
     private String userName;
@@ -24,45 +24,19 @@ public class User {
     @Column
     private String phone;
     @Column
-    private int score;
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
+    private Integer score;
     @Column(unique = true)
     @NonNull
     private String email;
     @Column
-    private Level level;
+    private Integer level;
     @Column
     @NotNull(message = "password cannot be null")
     private String password;
-
-    private String recoveryCode;
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
+    @Column
+    private Integer recoveryCode;
+    @Column
     private String location;
-
-    @Transient
-    public String getRecoveryCode() {
-        return recoveryCode;
-    }
-
-    public void setRecoveryCode(String recoveryCode) {
-        this.recoveryCode = recoveryCode;
-    }
 
     public long getId() {
         return id;
@@ -80,12 +54,20 @@ public class User {
         this.name = name;
     }
 
-    public String getSurName() {
-        return surName;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setSurName(String surName) {
-        this.surName = surName;
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getNickName() {
@@ -104,6 +86,14 @@ public class User {
         this.phone = phone;
     }
 
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -112,11 +102,11 @@ public class User {
         this.email = email;
     }
 
-    public Level getLevel() {
+    public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(Level level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 
@@ -128,13 +118,19 @@ public class User {
         this.password = password;
     }
 
-    public String getUserName() {
-        return userName;
+    public Integer getRecoveryCode() {
+        return recoveryCode;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setRecoveryCode(Integer recoveryCode) {
+        this.recoveryCode = recoveryCode;
     }
 
+    public String getLocation() {
+        return location;
+    }
 
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }

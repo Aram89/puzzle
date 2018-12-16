@@ -3,23 +3,20 @@ package com.music.puzzle.authorization;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.music.puzzle.exception.ErrorCode;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Value;
+import com.music.puzzle.util.JwtHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.music.puzzle.authorization.SecurityConstants.HEADER_STRING;
-import static com.music.puzzle.authorization.SecurityConstants.SECRET;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
     public AuthorizationFilter(AuthenticationManager authManager) {
@@ -40,7 +37,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
 
         if (authentication == null) {
-            generateAndSendErrorResponse((HttpServletResponse) res, "Token is not valid");
+            generateAndSendErrorResponse(res);
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -49,28 +46,19 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
-        try {
-            if (token != null) {
-                // parse the token.
-                String user = Jwts.parser()
-                        .setSigningKey(SECRET.getBytes())
-                        .parseClaimsJws(token)
-                        .getBody()
-                        .getSubject();
-
-                if (user != null) {
-                    return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
-                }
-                return null;
+        if (token != null) {
+            String jwt = token.replace("Bearer ", "");
+            // parse the token.
+            String user = JwtHelper.parse(jwt);
+            if (user != null) {
+                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
             }
-        } catch (Exception e) {
-            return null;
         }
         return null;
     }
 
-    private void generateAndSendErrorResponse (HttpServletResponse httpServletResponse, String message) throws IOException {
-        ErrorCode errorCodes = new ErrorCode(message);
+    private void generateAndSendErrorResponse(HttpServletResponse httpServletResponse) throws IOException {
+        ErrorCode errorCodes = new ErrorCode("Token is not valid");
         // jwt is not valid, send error response to client.
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         httpServletResponse.setContentType("application/json");

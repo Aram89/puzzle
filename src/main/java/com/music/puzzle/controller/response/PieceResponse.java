@@ -1,28 +1,15 @@
 package com.music.puzzle.controller.response;
 
-import org.springframework.core.io.Resource;
-
 public class PieceResponse {
 
     private byte[] data;
     private int correctPosition;
-    private int viewPosition;
-    private long puzzleId;
-    private Resource resource;
 
-    public Resource getResource() {
-        return resource;
-    }
-
-    public void setResource(Resource resource) {
-        this.resource = resource;
-    }
-
-    public PieceResponse(Resource resource, int correctPosition, long puzzleId) {
-        this.resource = resource;
+    public PieceResponse(byte[] bytes, int correctPosition) {
+        this.data = bytes;
         this.correctPosition = correctPosition;
-        this.puzzleId = puzzleId;
     }
+
 
     public byte[] getData() {
         return data;
@@ -40,19 +27,4 @@ public class PieceResponse {
         this.correctPosition = correctPosition;
     }
 
-    public int getViewPosition() {
-        return viewPosition;
-    }
-
-    public void setViewPosition(int viewPosition) {
-        this.viewPosition = viewPosition;
-    }
-
-    public long getPuzzleId() {
-        return puzzleId;
-    }
-
-    public void setPuzzleId(long puzzleId) {
-        this.puzzleId = puzzleId;
-    }
 }

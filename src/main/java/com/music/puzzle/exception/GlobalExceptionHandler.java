@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ErrorCode sqlException(Exception se) {
         logger.error("Error: ", se);
-        return new ErrorCode("wrong id");
+        return new ErrorCode("sql error");
     }
 
 
