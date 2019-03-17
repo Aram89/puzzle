@@ -22,6 +22,8 @@ public class RatingService {
 
     private final UserRepo userRepo;
 
+    private static final int COUNT = 10;
+
     @Autowired
     public RatingService(UserService userService, UserRepo userRepo) {
         this.userService = userService;
@@ -61,8 +63,8 @@ public class RatingService {
                 .indexOf(u -> user.getUserName().equals(u.getUserName()))
                 .getAsLong();
 
-        int leadersCount = 10;
-        if(detailsList.size() < 10) {
+        int leadersCount = COUNT;
+        if(detailsList.size() < COUNT) {
             leadersCount = detailsList.size();
         }
 
@@ -71,7 +73,7 @@ public class RatingService {
                     detailsList.get(i).getScore(), i +1));
         }
 
-        if(userPosition <= 10) {
+        if(userPosition <= COUNT) {
             return new RatingResponse(leaders, userPosition);
         }
 
@@ -81,17 +83,17 @@ public class RatingService {
         int end;
         List<UserDetails> neighbours = new ArrayList<>();
 
-        if (userPosition >= detailsList.size() -10) {
+        if (userPosition >= detailsList.size() - COUNT) {
             // User is in worst ten.
-            if(userPosition - 5 <= 10) {
-                start = 10;
+            if(userPosition - 5 <= COUNT) {
+                start = COUNT;
             } else {
-                start = allUsersCount - 10;
+                start = allUsersCount - COUNT;
             }
             end = allUsersCount - 1;
         } else {
-            if(userPosition - 5 <= 10) {
-                start = 10;
+            if(userPosition - 5 <= COUNT) {
+                start = COUNT;
             } else {
                 start = userPosition - 5;
 
