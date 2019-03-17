@@ -51,4 +51,12 @@ public class User {
     @Column
     private String location;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userName='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                ", location='" + location + '\'' +
+                '}';
+    }
 }

@@ -14,7 +14,6 @@ public interface MusicRepo extends CrudRepository<MusicPuzzle, Long> {
     List<MusicPuzzle> findByTypeAndGenre(String type, Genre genre);
     List<MusicPuzzle> findByGenre(Genre genre);
 
-
     @Query(
             value = "select * from music_puzzle\n" +
                     "where genre = ?3 AND type = ?4 AND music_puzzle.music_id NOT IN (select music_id from user_puzzle" +

@@ -39,7 +39,7 @@ public class MusicService {
 
         } else {
             // TODO currently win logic was not implemented, if all puzzles are played, just return random puzzle.
-            log.warn("User  {} plays all puzzles for this level, get random not wined puzzle", user.getEmail());
+            log.info("User  {} plays all puzzles for this level, get random not wined puzzle", user.getEmail());
             return getRandomPuzzle(level, genre);
         }
 
