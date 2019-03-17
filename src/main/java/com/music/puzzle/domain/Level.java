@@ -45,18 +45,10 @@ public enum Level {
         return startScore;
     }
 
-    public int getEndScore() {
-        return endScore;
-    }
-
     public int getScorePerWin(boolean hint) {
-        if(hint) {
-            return scorePerWin/2;
+        if (hint) {
+            return scorePerWin / 2;
         }
-        return scorePerWin;
-    }
-
-    public int getScorePerWin() {
         return scorePerWin;
     }
 
@@ -70,26 +62,45 @@ public enum Level {
 
     public static Level get(int number) throws AppException {
         switch (number) {
-            case 1 : return ENTRY1;
-            case 2 : return ENTRY2;
-            case 3 : return ENTRY3;
-            case 4 : return ENTRY4;
-            case 5 : return ENTRY5;
-            case 6 : return ENTRY6;
-            case 7 : return BASIC1;
-            case 8 : return BASIC2;
-            case 9 : return BASIC3;
-            case 10 : return BASIC4;
-            case 11 : return BASIC5;
-            case 12 : return BASIC6;
-            case 13 : return MASTER1;
-            case 14 : return MASTER2;
-            case 15 : return MASTER3;
-            case 16 : return MASTER4;
-            case 17 : return MASTER5;
-            case 18 : return MASTER6;
+            case 1:
+                return ENTRY1;
+            case 2:
+                return ENTRY2;
+            case 3:
+                return ENTRY3;
+            case 4:
+                return ENTRY4;
+            case 5:
+                return ENTRY5;
+            case 6:
+                return ENTRY6;
+            case 7:
+                return BASIC1;
+            case 8:
+                return BASIC2;
+            case 9:
+                return BASIC3;
+            case 10:
+                return BASIC4;
+            case 11:
+                return BASIC5;
+            case 12:
+                return BASIC6;
+            case 13:
+                return MASTER1;
+            case 14:
+                return MASTER2;
+            case 15:
+                return MASTER3;
+            case 16:
+                return MASTER4;
+            case 17:
+                return MASTER5;
+            case 18:
+                return MASTER6;
 
-            default : throw new AppException("wrong level, level should be < 18");
+            default:
+                throw new AppException("wrong level, level should be < 18");
         }
     }
 
@@ -133,7 +144,8 @@ public enum Level {
             case MASTER6:
                 throw new AppException("It's last level, End of Game");
 
-            default:return ENTRY1;
+            default:
+                return ENTRY1;
         }
     }
 }

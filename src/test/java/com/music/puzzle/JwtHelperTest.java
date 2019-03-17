@@ -1,7 +1,12 @@
 package com.music.puzzle;
 
+import com.music.puzzle.domain.MusicPuzzle;
 import com.music.puzzle.util.JwtHelper;
 import org.junit.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class JwtHelperTest {
 
@@ -17,4 +22,7 @@ public class JwtHelperTest {
         // Assert
         Assert.assertEquals(expectedEmail, EMAIL);
     }
+
+
+
 }

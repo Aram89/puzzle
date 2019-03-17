@@ -28,52 +28,83 @@ public class RatingService {
         this.userRepo = userRepo;
     }
 
-    public RatingResponse getGlobal(String email, int count, int offset) throws AppException {
+    public RatingResponse getGlobal(String email) throws AppException {
         User user = userService.getUser(email);
 
         Iterable<User> users = userRepo.findAll();
-        return get(user, users, count, offset);
+        return get(user, users);
     }
 
-    public RatingResponse getLocal(String email, int count, int offset) throws AppException {
+    public RatingResponse getLocal(String email) throws AppException {
         User user = userService.getUser(email);
 
         Iterable<User> users = userRepo.findByLocation(user.getLocation());
-        return get(user, users, count, offset);
+        return get(user, users);
     }
 
-    private RatingResponse get(User user, Iterable<User> users, int count, int offset) {
+    private RatingResponse get(User user, Iterable<User> users) {
+        /* Load all users sorted by score and converted to user details */
+        Comparator<User> scoreComperator
+                = Comparator.comparing(User::getScore);
+
         List<UserDetails> detailsList =
                 StreamSupport.stream(users.spliterator(), false)
-                        .sorted(Comparator.comparing(User::getScore))
+                        .sorted(scoreComperator.reversed())
                         .map(this::mapper)
                         .collect(Collectors.toList());
 
-        List<UserDetails> leaders = detailsList.subList(0, min(count, detailsList.size() -1));
+        /* Get top ten users */
+        List<UserDetails> leaders = new ArrayList<>();
+
+        /* Get current user position */
         int userPosition = (int) StreamEx.of(detailsList)
                 .indexOf(u -> user.getUserName().equals(u.getUserName()))
                 .getAsLong();
 
-        if (userPosition < count) {
-            // User is in leaders, return only leaders.
+        int leadersCount = 10;
+        if(detailsList.size() < 10) {
+            leadersCount = detailsList.size();
+        }
+
+        for(int i = 0; i < leadersCount; ++i) {
+            if(detailsList.size() < 10)
+            leaders.add(userDetail(detailsList.get(i).getUserName(), detailsList.get(i).getLocation(),
+                    detailsList.get(i).getScore(), i +1));
+        }
+
+
+        if(userPosition <= 10) {
             return new RatingResponse(leaders, userPosition);
         }
 
+        int allUsersCount = detailsList.size();
+
         int start;
         int end;
+        List<UserDetails> neighbours = new ArrayList<>();
 
-        if (userPosition + offset > detailsList.size()) {
-            start = detailsList.size() - 2 * offset;
-            end = detailsList.size() - 1;
+        if (userPosition >= detailsList.size() -10) {
+            // User is in worst ten.
+            if(userPosition - 5 <= 10) {
+                start = 10;
+            } else {
+                start = allUsersCount - 10;
+            }
+            end = allUsersCount - 1;
         } else {
-            start = userPosition - offset;
-            end = userPosition + offset;
-        }
-        List<UserDetails> neighbours = detailsList.subList(start, end);
+            if(userPosition - 5 <= 10) {
+                start = 10;
+            } else {
+                start = userPosition - 5;
 
-        for(int i  = 0; i < neighbours.size(); ++i) {
-            neighbours.get(i).setPosition(start + i);
-        };
+            }
+            end = userPosition + 5;
+        }
+
+        for(int i = start; i < end; ++i) {
+            neighbours.add(userDetail(detailsList.get(i).getUserName(), detailsList.get(i).getLocation(),
+                    detailsList.get(i).getScore(), i+1));
+        }
 
         ArrayList<UserDetails> all = new ArrayList<>(leaders);
         all.addAll(neighbours);
@@ -90,6 +121,13 @@ public class RatingService {
             return number2;
         }
         return number1;
+    }
+
+    private UserDetails userDetail(String name, String location, int score, int position) {
+        UserDetails details = new UserDetails(name, location,
+                score);
+        details.setPosition(position);
+        return details;
     }
 
 }

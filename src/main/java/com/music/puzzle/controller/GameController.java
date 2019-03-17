@@ -19,19 +19,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class GameController {
 
     private final UserService userService;
-    private final MusicService musicService;
 
     @Autowired
-    public GameController(MusicService musicService, UserService userService) {
-        this.musicService = musicService;
+    public GameController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping(path = "/win")
     public ResponseEntity<WinResponse> win(@RequestParam("email") String email,
-                                                   @RequestParam("musicId") int musicId, @RequestParam("hint") boolean hint) throws AppException {
-        int score = musicService.getScore(musicId, hint);
-        WinResponse response = userService.addScore(email, score);
+                                                   @RequestParam("hint") boolean hint) throws AppException {
+        WinResponse response = userService.addScore(email, hint);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

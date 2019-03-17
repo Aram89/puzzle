@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
 
@@ -24,7 +27,7 @@ public class RankingController {
 
     @GetMapping(path = "/global")
     public ResponseEntity<RatingResponse> getGlobal(@RequestParam("email") @NonNull String email) throws AppException {
-        RatingResponse ratingResponse = ratingService.getGlobal(email, 10, 5);
+        RatingResponse ratingResponse = ratingService.getGlobal(email);
 
         return new ResponseEntity<>(ratingResponse, HttpStatus.OK);
     }
@@ -32,7 +35,7 @@ public class RankingController {
     @GetMapping(path = "/local")
     public ResponseEntity<RatingResponse> getLocal(@RequestParam("email") @NonNull String email) throws AppException,
             UnsupportedEncodingException {
-        RatingResponse ratingResponse = ratingService.getLocal(email, 10, 5);
+        RatingResponse ratingResponse = ratingService.getLocal(email);
 
         return new ResponseEntity<>(ratingResponse, HttpStatus.OK);
     }

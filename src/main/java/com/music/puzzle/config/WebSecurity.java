@@ -35,6 +35,20 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.GET, "/music/guest/puzzle").permitAll()
                 .antMatchers(HttpMethod.GET, "/music/save").permitAll()
+                .antMatchers(HttpMethod.POST, "/mail/").permitAll()
+
+                // For admin
+                .antMatchers(HttpMethod.GET, "/user/all").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/user").permitAll()
+                .antMatchers(HttpMethod.GET, "/user").permitAll()
+                .antMatchers(HttpMethod.GET, "/user/count").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/puzzle/all").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/puzzle/").permitAll()
+                .antMatchers(HttpMethod.GET, "/puzzle/genre").permitAll()
+                .antMatchers(HttpMethod.GET, "/puzzle/").permitAll()
+
+                .antMatchers(HttpMethod.POST, "/mail").permitAll()
 
                 .anyRequest().authenticated()
                 .and()

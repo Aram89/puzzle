@@ -3,12 +3,15 @@ package com.music.puzzle.service;
 import com.music.puzzle.controller.response.UserInfo;
 import com.music.puzzle.controller.response.WinResponse;
 import com.music.puzzle.domain.Level;
+import com.music.puzzle.domain.PuzzleStatus;
 import com.music.puzzle.domain.User;
 import com.music.puzzle.exception.AppException;
+import com.music.puzzle.repository.UserPuzzleRepo;
 import com.music.puzzle.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import sun.applet.AppletSecurityException;
 
 import java.util.List;
 import java.util.Random;
@@ -19,18 +22,20 @@ public class UserService {
     private final UserRepo userRepo;
 
     private final MailService mailService;
+    private final UserPuzzleRepo userPuzzleRepo;
 
     @Autowired
-    public UserService(UserRepo userRepo, MailService mailService) {
+    public UserService(UserRepo userRepo, MailService mailService, UserPuzzleRepo userPuzzleRepo) {
         this.userRepo = userRepo;
         this.mailService = mailService;
+        this.userPuzzleRepo = userPuzzleRepo;
     }
 
     public void create(User user) throws AppException {
-        if(user.getEmail() == null) {
+        if (user.getEmail() == null) {
             throw new AppException("Email is empty");
         }
-        if(user.getUserName() == null) {
+        if (user.getUserName() == null) {
             throw new AppException("Username is empty");
         }
         checkEmail(user.getEmail());
@@ -45,7 +50,7 @@ public class UserService {
 
     public String login(User user) throws AppException {
         List<User> users;
-        if(user.getEmail() == null) {
+        if (user.getEmail() == null) {
             throw new AppException("email is empty");
         }
         users = userRepo.findByEmail(user.getEmail());
@@ -62,13 +67,13 @@ public class UserService {
     }
 
     public void checkEmail(String email) throws AppException {
-        if(!userRepo.findByEmail(email).isEmpty()) {
+        if (!userRepo.findByEmail(email).isEmpty()) {
             throw new AppException("Email was already used");
         }
     }
 
     public void checkUserName(String userName) throws AppException {
-        if(!userRepo.findByUserName(userName).isEmpty()) {
+        if (!userRepo.findByUserName(userName).isEmpty()) {
             throw new AppException("UserName was already used");
         }
     }
@@ -86,7 +91,7 @@ public class UserService {
 
     public User getUser(String email) throws AppException {
         List<User> userList = userRepo.findByEmail(email);
-        if(userList.isEmpty()) {
+        if (userList.isEmpty()) {
             throw new AppException("Email does not exist");
         }
         return userList.get(0);
@@ -114,14 +119,16 @@ public class UserService {
         userRepo.save(user);
     }
 
-    public WinResponse addScore(String email, int score) throws AppException {
+    public WinResponse addScore(String email, boolean hint) throws AppException {
         User user = getUser(email);
-        int newScore = user.getScore() + score;
         Level level = Level.get(user.getLevel());
+        int score = level.getScorePerWin(hint);
+
+        int newScore = user.getScore() + score;
 
         WinResponse response = new WinResponse();
         // Check and update level if needed.
-        if(nextLevel(level, newScore)) {
+        if (nextLevel(level, newScore)) {
             user.setLevel(level.nextLevel().getNumber());
             response.setLevelChanged(true);
             response.setLevel(level.nextLevel().getNumber());
@@ -132,9 +139,27 @@ public class UserService {
 
         user.setScore(newScore);
 
+        //userPuzzleRepo.updateStatus(user.getId(), musicId, PuzzleStatus.WIN.name());
+
         userRepo.save(user);
 
         return response;
+    }
+
+    public Iterable<User> getAll() {
+        return userRepo.findAll();
+    }
+
+    public User getById(Long id) throws AppException {
+        return userRepo.findById(id).orElseThrow(() -> new AppException("User with id " + id + " not found "));
+    }
+
+    public void delete(Long id) {
+        userRepo.findById(id).ifPresent(user -> userRepo.deleteById(id));
+    }
+
+    public Long getCount() {
+        return userRepo.count();
     }
 
     private boolean nextLevel(Level level, int score) throws AppException {

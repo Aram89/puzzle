@@ -30,7 +30,6 @@ public class UserController {
         this.fileService = fileService;
     }
 
-
     @PostMapping(path = "/sign-up")
     public ResponseEntity<SignUpResponse> signUp(@RequestBody @NonNull User user) throws AppException {
         userService.create(user);
@@ -99,6 +98,30 @@ public class UserController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+//    @GetMapping(path = "/all")
+//    public ResponseEntity getAll() throws AppException {
+//        Iterable all = userService.getAll();
+//        return new ResponseEntity<>(all, HttpStatus.OK);
+//    }
+//
+//    @GetMapping
+//    public ResponseEntity getById(@RequestParam("id") Long id) throws AppException {
+//        User user = userService.getById(id);
+//        return new ResponseEntity<>(user, HttpStatus.OK);
+//    }
+//
+//    @DeleteMapping
+//    public ResponseEntity deleteById(@RequestParam("id") Long id) throws AppException {
+//        userService.delete(id);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+
+    @GetMapping(path = "/count")
+    public ResponseEntity getCount() throws AppException {
+        Long count = userService.getCount();
+        return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
 }
