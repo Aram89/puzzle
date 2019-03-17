@@ -67,11 +67,9 @@ public class RatingService {
         }
 
         for(int i = 0; i < leadersCount; ++i) {
-            if(detailsList.size() < 10)
             leaders.add(userDetail(detailsList.get(i).getUserName(), detailsList.get(i).getLocation(),
                     detailsList.get(i).getScore(), i +1));
         }
-
 
         if(userPosition <= 10) {
             return new RatingResponse(leaders, userPosition);
@@ -114,13 +112,6 @@ public class RatingService {
 
     private UserDetails mapper(User user) {
         return new UserDetails(user.getUserName(), user.getLocation(), user.getScore());
-    }
-
-    private int min(int number1, int number2) {
-        if (number1 > number2) {
-            return number2;
-        }
-        return number1;
     }
 
     private UserDetails userDetail(String name, String location, int score, int position) {
