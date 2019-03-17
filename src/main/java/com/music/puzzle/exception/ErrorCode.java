@@ -1,17 +1,12 @@
 package com.music.puzzle.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class ErrorCode {
-    public ErrorCode(String message) {
-        this.message = message;
-    }
 
     private String message;
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }
