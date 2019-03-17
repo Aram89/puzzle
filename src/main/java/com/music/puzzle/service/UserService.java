@@ -3,45 +3,42 @@ package com.music.puzzle.service;
 import com.music.puzzle.controller.response.UserInfo;
 import com.music.puzzle.controller.response.WinResponse;
 import com.music.puzzle.domain.Level;
-import com.music.puzzle.domain.PuzzleStatus;
 import com.music.puzzle.domain.User;
 import com.music.puzzle.exception.AppException;
-import com.music.puzzle.repository.UserPuzzleRepo;
 import com.music.puzzle.repository.UserRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import sun.applet.AppletSecurityException;
 
 import java.util.List;
 import java.util.Random;
 
+@Slf4j
 @Service
 public class UserService {
 
     private final UserRepo userRepo;
 
     private final MailService mailService;
-    private final UserPuzzleRepo userPuzzleRepo;
 
     @Autowired
-    public UserService(UserRepo userRepo, MailService mailService, UserPuzzleRepo userPuzzleRepo) {
+    public UserService(UserRepo userRepo, MailService mailService) {
         this.userRepo = userRepo;
         this.mailService = mailService;
-        this.userPuzzleRepo = userPuzzleRepo;
     }
 
     public void create(User user) throws AppException {
         if (user.getEmail() == null) {
-            throw new AppException("Email is empty");
+            throw new AppException("Email is empty :" + user);
         }
         if (user.getUserName() == null) {
-            throw new AppException("Username is empty");
+            throw new AppException("Username is empty :" + user);
         }
         checkEmail(user.getEmail());
         checkUserName(user.getUserName());
 
-        // Enrty level
+        // Entry level
         user.setLevel(1);
         user.setScore(0);
 
@@ -51,30 +48,30 @@ public class UserService {
     public String login(User user) throws AppException {
         List<User> users;
         if (user.getEmail() == null) {
-            throw new AppException("email is empty");
+            throw new AppException("email is empty :" + user);
         }
         users = userRepo.findByEmail(user.getEmail());
 
         if (users.isEmpty()) {
-            throw new AppException("email or password is wrong");
+            throw new AppException("email or password is wrong :" + user);
         }
         User dbUSer = users.get(0);
         if (!user.getPassword().equals(dbUSer.getPassword())) {
-            throw new AppException("email or password is wrong");
+            throw new AppException("email or password is wrong : " + user);
         }
         return dbUSer.getLocation();
 
     }
 
-    public void checkEmail(String email) throws AppException {
+    private void checkEmail(String email) throws AppException {
         if (!userRepo.findByEmail(email).isEmpty()) {
-            throw new AppException("Email was already used");
+            throw new AppException("Email was already used " + email);
         }
     }
 
-    public void checkUserName(String userName) throws AppException {
+    private void checkUserName(String userName) throws AppException {
         if (!userRepo.findByUserName(userName).isEmpty()) {
-            throw new AppException("UserName was already used");
+            throw new AppException("UserName was already used" + userName);
         }
     }
 
@@ -86,13 +83,14 @@ public class UserService {
         info.setEmail(email);
         info.setScore(user.getScore());
         info.setLevel(user.getLevel());
+
         return info;
     }
 
     public User getUser(String email) throws AppException {
         List<User> userList = userRepo.findByEmail(email);
         if (userList.isEmpty()) {
-            throw new AppException("Email does not exist");
+            throw new AppException("Email does not exist : " + email);
         }
         return userList.get(0);
     }
@@ -109,7 +107,7 @@ public class UserService {
     public void verifyCode(@NonNull String email, @NonNull int code) throws AppException {
         User user = getUser(email);
         if (code != user.getRecoveryCode()) {
-            throw new AppException("Code is not correct");
+            throw new AppException("Code is not correct :" + code);
         }
     }
 
@@ -132,6 +130,7 @@ public class UserService {
             user.setLevel(level.nextLevel().getNumber());
             response.setLevelChanged(true);
             response.setLevel(level.nextLevel().getNumber());
+            log.info("Users level has been changed {}", email);
         } else {
             response.setLevel(user.getLevel());
         }
@@ -144,18 +143,6 @@ public class UserService {
         userRepo.save(user);
 
         return response;
-    }
-
-    public Iterable<User> getAll() {
-        return userRepo.findAll();
-    }
-
-    public User getById(Long id) throws AppException {
-        return userRepo.findById(id).orElseThrow(() -> new AppException("User with id " + id + " not found "));
-    }
-
-    public void delete(Long id) {
-        userRepo.findById(id).ifPresent(user -> userRepo.deleteById(id));
     }
 
     public Long getCount() {

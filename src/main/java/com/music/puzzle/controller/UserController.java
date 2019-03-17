@@ -7,6 +7,7 @@ import com.music.puzzle.exception.AppException;
 import com.music.puzzle.service.FileService;
 import com.music.puzzle.service.UserService;
 import com.music.puzzle.util.JwtHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -32,51 +34,63 @@ public class UserController {
 
     @PostMapping(path = "/sign-up")
     public ResponseEntity<SignUpResponse> signUp(@RequestBody @NonNull User user) throws AppException {
+        log.info("Received request for SignUp {}", user);
         userService.create(user);
         String location = user.getLocation();
         String jwt = JwtHelper.generate(user.getEmail());
         SignUpResponse response = new SignUpResponse(jwt, location);
 
+        log.info("User successfully registered in {}", user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(path = "/sign-in")
     public ResponseEntity<SignUpResponse> signIn(@RequestBody @NonNull User user) throws AppException {
+        log.info("Received request for SignIn {}", user);
         String location = userService.login(user);
         String jwt = JwtHelper.generate(user.getEmail());
         SignUpResponse response = new SignUpResponse(jwt, location);
 
+        log.info("User successfully logged in {}", user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(path = "/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) throws AppException {
+        log.info("Received request for forgot password {}", email);
         userService.sendCode(email);
         String jwt = JwtHelper.generate(email);
 
+        log.info("Email with recovery code was sent {}", email);
         return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
     @GetMapping(path = "/verify-code")
     public ResponseEntity<String> verifyCode(@RequestParam("email") String email,
                                              @RequestParam("code") int code) throws AppException {
+        log.info("Received request for code verification {},{}", email, code);
         userService.verifyCode(email, code);
         String jwt = JwtHelper.generate(email);
 
+        log.info("Code verified {}, {}", email, code);
         return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
     @PostMapping(path = "/change-password")
     public ResponseEntity<String> changePassword(@RequestBody @NonNull User user) throws AppException {
+        log.info("Received request for changing password {}", user);
         userService.changePassword(user.getEmail(), user.getPassword());
 
+        log.info("User's password has been changed {}", user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(path = "/info")
     public ResponseEntity<UserInfo> getProfileData(@RequestParam @NonNull String email) throws AppException {
+        log.info("Received request for getting info {}", email);
         UserInfo info = userService.getProfileInfo(email);
 
+        log.info("Get info request successfully processed {}", info);
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
@@ -88,7 +102,6 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
     @GetMapping(path = "/avatar")
     public ResponseEntity<Resource> getAvatar(@RequestParam("email") String email) throws AppException {
         User user = userService.getUser(email);
@@ -99,24 +112,6 @@ public class UserController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
-
-//    @GetMapping(path = "/all")
-//    public ResponseEntity getAll() throws AppException {
-//        Iterable all = userService.getAll();
-//        return new ResponseEntity<>(all, HttpStatus.OK);
-//    }
-//
-//    @GetMapping
-//    public ResponseEntity getById(@RequestParam("id") Long id) throws AppException {
-//        User user = userService.getById(id);
-//        return new ResponseEntity<>(user, HttpStatus.OK);
-//    }
-//
-//    @DeleteMapping
-//    public ResponseEntity deleteById(@RequestParam("id") Long id) throws AppException {
-//        userService.delete(id);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
 
     @GetMapping(path = "/count")
     public ResponseEntity getCount() throws AppException {
