@@ -22,6 +22,8 @@ public class RatingService {
 
     private final UserRepo userRepo;
 
+    private static final int COUNT = 10;
+
     @Autowired
     public RatingService(UserService userService, UserRepo userRepo) {
         this.userService = userService;
@@ -61,19 +63,17 @@ public class RatingService {
                 .indexOf(u -> user.getUserName().equals(u.getUserName()))
                 .getAsLong();
 
-        int leadersCount = 10;
-        if(detailsList.size() < 10) {
+        int leadersCount = COUNT;
+        if(detailsList.size() < COUNT) {
             leadersCount = detailsList.size();
         }
 
         for(int i = 0; i < leadersCount; ++i) {
-            if(detailsList.size() < 10)
             leaders.add(userDetail(detailsList.get(i).getUserName(), detailsList.get(i).getLocation(),
                     detailsList.get(i).getScore(), i +1));
         }
 
-
-        if(userPosition <= 10) {
+        if(userPosition <= COUNT) {
             return new RatingResponse(leaders, userPosition);
         }
 
@@ -83,17 +83,17 @@ public class RatingService {
         int end;
         List<UserDetails> neighbours = new ArrayList<>();
 
-        if (userPosition >= detailsList.size() -10) {
+        if (userPosition >= detailsList.size() - COUNT) {
             // User is in worst ten.
-            if(userPosition - 5 <= 10) {
-                start = 10;
+            if(userPosition - 5 <= COUNT) {
+                start = COUNT;
             } else {
-                start = allUsersCount - 10;
+                start = allUsersCount - COUNT;
             }
             end = allUsersCount - 1;
         } else {
-            if(userPosition - 5 <= 10) {
-                start = 10;
+            if(userPosition - 5 <= COUNT) {
+                start = COUNT;
             } else {
                 start = userPosition - 5;
 
@@ -114,13 +114,6 @@ public class RatingService {
 
     private UserDetails mapper(User user) {
         return new UserDetails(user.getUserName(), user.getLocation(), user.getScore());
-    }
-
-    private int min(int number1, int number2) {
-        if (number1 > number2) {
-            return number2;
-        }
-        return number1;
     }
 
     private UserDetails userDetail(String name, String location, int score, int position) {
